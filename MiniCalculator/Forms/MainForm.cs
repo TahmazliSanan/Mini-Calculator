@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
 namespace MiniCalculator.Forms
 {
@@ -30,6 +32,14 @@ namespace MiniCalculator.Forms
             {
                 string input = txtInput.Text;
                 input = input.Replace("x", "*");
+
+                if (Regex.IsMatch(input, @"\/\s*0(\D|$)"))
+                {
+                    txtInput.Text = "Cannot divide by zero!";
+                    txtInput.ForeColor = Color.Red;
+                    return;
+                }
+
                 DataTable dataTable = new DataTable();
                 object result = dataTable.Compute(input, null);
                 txtInput.Text = result.ToString();
@@ -37,11 +47,6 @@ namespace MiniCalculator.Forms
             catch (SyntaxErrorException)
             {
                 txtInput.Text = "Syntax Error!";
-                txtInput.ForeColor = Color.Red;
-            }
-            catch (DivideByZeroException)
-            {
-                txtInput.Text = "Cannot divide by zero!";
                 txtInput.ForeColor = Color.Red;
             }
             catch (EvaluateException)
